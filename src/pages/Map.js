@@ -1,21 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import PubNub from 'pubnub';
 import Papa from 'papaparse';
-//import { PubNubProvider, usePubNub } from 'pubnub-react';
-
-// const pubnub = new PubNub({
-//     publishKey: 'pub-c-c8790175-ae39-4130-a3fb-82813e3223c1',
-//     subscribeKey: 'sub-c-2b6af46d-54c7-4768-960e-c203cc8fa80c',
-//     uuid: 'parktesting'
-//   });
 
 export default function Map() {
     const [rectangles, setRectangles] = useState([]);
         useEffect(() => {
 
         const pubnub = new PubNub({
-            subscribeKey: 'sub-c-2b6af46d-54c7-4768-960e-c203cc8fa80c',
-            uuid: 'parktesting'
+            subscribeKey: '',
+            uuid: ''
           });
 
         pubnub.subscribe({
