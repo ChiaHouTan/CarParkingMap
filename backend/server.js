@@ -19,6 +19,7 @@ mongoose.connect(mongoURI, dbOptions)
 
 const CarModel = require('./CarSchemas')
 const Table2Model = require('./Table2Schemas')
+const Table3Model = require('./Table3Schemas')
 
 app.get('/getAllCar', async(req, res)=> {
     try {
@@ -39,6 +40,12 @@ app.get('/getCar', (req, res)=> {
 app.get('/getCameraImages2', (req, res)=> {
     Table2Model.find()
     .then(camera_Image2=> res.json(camera_Image2))
+    .catch(err => res.json(err))
+})
+
+app.get('/getParkingSpace', (req, res)=> {
+    Table3Model.find()
+    .then(parking_space=> res.json(parking_space))
     .catch(err => res.json(err))
 })
 

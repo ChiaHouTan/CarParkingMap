@@ -4,56 +4,58 @@ import Papa from 'papaparse';
 //import { PubNubProvider, usePubNub } from 'pubnub-react';
 
 // const pubnub = new PubNub({
-//     publishKey: 'pub-c-c8790175-ae39-4130-a3fb-82813e3223c1',
-//     subscribeKey: 'sub-c-2b6af46d-54c7-4768-960e-c203cc8fa80c',
-//     uuid: 'parktesting'
+//     publishKey: process.env.REACT_APP_PUBLISHKEY,
+//     subscribeKey: process.env.REACT_APP_SUBSCRIBEKEY,
+//     uuid: process.env.REACT_APP_UUID
 //   });
 
 export default function Map() {
     const [rectangles, setRectangles] = useState([]);
-        useEffect(() => {
+    const [selectedRect, setSelectedRect] = useState(null);
 
-        const pubnub = new PubNub({
-            subscribeKey: 'sub-c-2b6af46d-54c7-4768-960e-c203cc8fa80c',
-            uuid: 'parktesting'
-          });
+        // useEffect(() => {
 
-        pubnub.subscribe({
-            channels: ['camerav3_channel'],
-          });
+        // const pubnub = new PubNub({
+        //     subscribeKey: process.env.REACT_APP_SUBSCRIBEKEY,
+        //     uuid: 'parktesting'
+        //   });
+
+        // pubnub.subscribe({
+        //     channels: [process.env.REACT_APP_CHANNEL],
+        //   });
         
-          pubnub.addListener({
-            message: (message) => {
-              // Assuming the message format is { ids: [id1, id2, ...], booleans: [bool1, bool2, ...] }
-              const { id_list, boolean_values } = message.message;
+        //   pubnub.addListener({
+        //     message: (message) => {
+        //       // Assuming the message format is { ids: [id1, id2, ...], booleans: [bool1, bool2, ...] }
+        //       const { id_list, boolean_values } = message.message;
       
-              // Update state based on the received message
-              const updatedRectangles = rectangles.map((rect) => {
-                const index = id_list.indexOf(rect.id);
-                const isBlueID = ['B247', 'B248', 'B249', 'B250', 'B251', 'B252'].includes(rect.id);
-                // Convert the Python boolean value to lowercase in JavaScript
-                const lowerCaseBoolean = boolean_values[index] ? 'true' : 'false';
+        //       // Update state based on the received message
+        //       const updatedRectangles = rectangles.map((rect) => {
+        //         const index = id_list.indexOf(rect.id);
+        //         const isBlueID = ['B247', 'B248', 'B249', 'B250', 'B251', 'B252'].includes(rect.id);
+        //         // Convert the Python boolean value to lowercase in JavaScript
+        //         const lowerCaseBoolean = boolean_values[index] ? 'true' : 'false';
       
-                if (isBlueID) {
-                    // Set blue color for specific IDs
-                    rect.color = lowerCaseBoolean === 'true' ? 'lightskyblue' : 'red';
-                  } else {
-                  // Change the color based on the boolean value
-                  rect.color = lowerCaseBoolean === 'true' ? 'limegreen' : 'red';
-                }
+        //         if (isBlueID) {
+        //             // Set blue color for specific IDs
+        //             rect.color = lowerCaseBoolean === 'true' ? 'lightskyblue' : 'red';
+        //           } else {
+        //           // Change the color based on the boolean value
+        //           rect.color = lowerCaseBoolean === 'true' ? 'limegreen' : 'red';
+        //         }
       
-                return rect;
-              });
+        //         return rect;
+        //       });
       
-              setRectangles(updatedRectangles);
-            },
-          });
+        //       setRectangles(updatedRectangles);
+        //     },
+        //   });
 
-          return () => {
-            pubnub.unsubscribeAll();
-            pubnub.stop();
-          };
-        }, [rectangles]);
+        //   return () => {
+        //     pubnub.unsubscribeAll();
+        //     pubnub.stop();
+        //   };
+        // }, [rectangles]);
 
         useEffect(() => {
             const fetchData = async () => {
@@ -66,7 +68,7 @@ export default function Map() {
                   header: true,
                   dynamicTyping: true,
                   complete: (result) => {
-                    const initialRectangles = result.data.map(({ id, x1, y1 }) => {
+                    const initialRectangles = result.data.map(({ id, x1, y1, lat, lng }) => {
                         let color;
                         let w;
                         let h;
@@ -92,6 +94,8 @@ export default function Map() {
                             w,
                             h,
                             color,
+                            lat,
+                            lng,
                                 };
                     });
                     
@@ -106,18 +110,63 @@ export default function Map() {
         
             fetchData();
           }, []);
-      
 
+
+          // const handleRectClick = (destLat, destLng) => {
+          //   // Check if the browser supports the Geolocation API
+          //   if (navigator.geolocation) {
+          //     navigator.geolocation.getCurrentPosition(
+          //       (position) => {
+          //         const { latitude, longitude } = position.coords;
+          //         const googleMapsUrl = `https://www.google.com/maps/dir/${latitude},${longitude}/${destLat},${destLng}`;
+          //         window.location.href = googleMapsUrl;
+          //       },
+          //       (error) => {
+          //         console.error('Error getting current location:', error);
+          //       }
+          //     );
+          //   } else {
+          //     console.error('Geolocation is not supported by your browser');
+          //   }
+          // };
+
+          const handleRectClick = (rect) => {
+            setSelectedRect(rect);
+          };
+        
+          const handleClosePopUp = () => {
+            setSelectedRect(null);
+          };
+
+          const handleButtonClick = (destLat, destLng) => {
+            const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${destLat},${destLng}`;
+          
+            // Check if it's a mobile device
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+          
+            if (isMobile) {
+              window.location.href = googleMapsUrl;
+            } else {
+              // If not on a mobile device, provide a fallback behavior (e.g., open in a new tab)
+              window.open(googleMapsUrl, '_blank');
+            }
+          };
+
+          const handleBackClick = () => {
+                const url = '/';
+                // Change the URL of the current window
+                window.location.href = url;
+        };
 
 
 
     return <>
-                <div className="navbar">Car Park Map Option 1 Large</div>
                 <main className="main">
                 <section className="section">
                     <div className="parking-area">
                 
-                    <svg>
+                    <svg className='cpMap'>
+                    {/* <rect width="100" height="100" x="10" y="10" rx="20" ry="20" fill="blue" onClick={() => handleClick(53.982286, -6.392322)}/> */}
                     {rectangles.map((rect) => (
                      <rect
                     key={rect.id}
@@ -127,13 +176,25 @@ export default function Map() {
                     width={rect.w}
                     height={rect.h}
                     fill={rect.color}
+                    onClick={() => handleRectClick(rect)}
                     />
       ))}
                     </svg>
                 
+                    <button className="circle-button" onClick={handleBackClick}>X</button>    
             </div>
+            
         </section>
         </main>
+        {selectedRect && (
+        <div className="popup-box" onClick={handleClosePopUp}>
+          <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+            <p>{selectedRect.id}</p>
+            <button onClick={() => handleButtonClick(selectedRect.lat, selectedRect.lng)}>Guide</button>
+            <button onClick={handleClosePopUp}>Close</button>
+          </div>
+        </div>
+      )}
         <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     
     

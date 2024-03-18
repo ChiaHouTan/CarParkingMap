@@ -1,4 +1,3 @@
-import Navbar from './Navbar';
 import Home from "./pages/Home"
 import Map from "./pages/Map"
 import Table from "./pages/Table"
@@ -20,7 +19,6 @@ function App() {
 
   return (
     <>
-    <Navbar />
     {component}
     </>
   
