@@ -10,7 +10,7 @@ app.use(express.json())
 
 
 const dbOptions = {useNewUrlParser: true, useUnifiedTopology: true}
-const mongoURI = "mongodb+srv://jeremysoh222:kk6dGaMao5h7CoLW@cluster0.ke2biwp.mongodb.net/SmartParking"
+const mongoURI = ""
 
 mongoose.connect(mongoURI, dbOptions)
 .then(() => console.log('DB Connected!'))
