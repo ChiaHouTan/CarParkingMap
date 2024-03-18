@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PubNub from 'pubnub';
 import Papa from 'papaparse';
-<<<<<<< HEAD
 //import { PubNubProvider, usePubNub } from 'pubnub-react';
 
 // const pubnub = new PubNub({
@@ -9,21 +8,15 @@ import Papa from 'papaparse';
 //     subscribeKey: process.env.REACT_APP_SUBSCRIBEKEY,
 //     uuid: process.env.REACT_APP_UUID
 //   });
-=======
->>>>>>> e2994d49b429394840ac2324f3e1412de9c26650
-
 export default function Map() {
     const [rectangles, setRectangles] = useState([]);
     const [selectedRect, setSelectedRect] = useState(null);
 
-<<<<<<< HEAD
         // useEffect(() => {
-=======
         // const pubnub = new PubNub({
         //     subscribeKey: '',
         //     uuid: ''
         //   });
->>>>>>> e2994d49b429394840ac2324f3e1412de9c26650
 
         // const pubnub = new PubNub({
         //     subscribeKey: process.env.REACT_APP_SUBSCRIBEKEY,
